@@ -6,7 +6,7 @@ without having to run sudo.
 
 Calling syntax:
 
-backlight [-v] [+-]<int>[%]
+````backlight [-v] [+-]<int>[%]````
 
 -v will enable verbose mode. If specified, this needs to be the first argument.
 
