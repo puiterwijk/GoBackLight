@@ -29,7 +29,17 @@ import (
 )
 
 func findClassName() string {
-    return "intel_backlight"
+    files, err := ioutil.ReadDir("/sys/class/backlight")
+    if err != nil {
+        panic(err)
+    }
+    if len(files) < 1 {
+        panic("No backlight class objects found")
+    }
+    if len(files) > 1 {
+        panic("More than one backlight class found")
+    }
+    return files[0].Name()
 }
 
 func getFileName(name string) string {
