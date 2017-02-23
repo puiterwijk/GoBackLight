@@ -42,12 +42,12 @@ func findClassName() string {
     return files[0].Name()
 }
 
-func getFileName(name string) string {
-    return "/sys/class/backlight/" + findClassName() + "/" + name
+func getFileName(className string, name string) string {
+    return "/sys/class/backlight/" + className + "/" + name
 }
 
-func getValue(name string) int {
-    rawValue, err := ioutil.ReadFile(getFileName(name))
+func getValue(className string, name string) int {
+    rawValue, err := ioutil.ReadFile(getFileName(className, name))
     if err != nil {
         panic(err)
     }
@@ -60,10 +60,10 @@ func getValue(name string) int {
     return value
 }
 
-func setValue(name string, value int) {
+func setValue(className string, name string, value int) {
     strValue := strconv.Itoa(value)
     rawValue := []byte(strValue)
-    err := ioutil.WriteFile(getFileName(name), rawValue, 0644)
+    err := ioutil.WriteFile(getFileName(className, name), rawValue, 0644)
     if err != nil {
         panic(err)
     }
@@ -91,12 +91,13 @@ func getArguments() Arguments {
         return outp
     } else {
         nextArg := os.Args[1]
+        outp.operation = OP_SET_ABS
         if nextArg == "-v" {
             outp.verbose = true
             if len(os.Args) == 2 {
+                outp.operation = OP_GET
                 return outp
             }
-            outp.operation = OP_SET_ABS
             nextArg = os.Args[2]
         }
         if strings.HasPrefix(nextArg, "+") {
@@ -123,8 +124,10 @@ func getArguments() Arguments {
 }
 
 func main() {
-    maxBrightness := getValue("max_brightness")
-    currentBrightness := getValue("brightness")
+    className := findClassName()
+
+    maxBrightness := getValue(className, "max_brightness")
+    currentBrightness := getValue(className, "brightness")
 
     arguments := getArguments()
 
@@ -150,7 +153,7 @@ func main() {
         if arguments.verbose {
             fmt.Println(strconv.Itoa(currentBrightness) + " => " + strconv.Itoa(newBrightness))
         }
-        setValue("brightness", newBrightness)
+        setValue(className, "brightness", newBrightness)
         if arguments.verbose {
             fmt.Println("Written")
         }
@@ -178,7 +181,7 @@ func main() {
         if arguments.verbose {
             fmt.Println(strconv.Itoa(currentBrightness) + " => " + strconv.Itoa(newBrightness))
         }
-        setValue("brightness", newBrightness)
+        setValue(className, "brightness", newBrightness)
         if arguments.verbose {
             fmt.Println("Written")
         }
