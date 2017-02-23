@@ -8,7 +8,7 @@ Calling syntax:
 
 backlight [-v] [+-]<int>[%]
 
--v will enable verbose mode. This needs to be the first argument.
+-v will enable verbose mode. If specified, this needs to be the first argument.
 
 The value argument (second if -v appears, first otherwise) accepts an initial +
 or - to indicate that you want a change relative to the current value, and accepts
